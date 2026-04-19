@@ -1,15 +1,11 @@
 {
   "experiment_id": "ncbi_disease_valid_gpt_r_g_round1",
-  "description": "NCBI Disease moderation simulation run. Replace placeholder file contents with the actual PubAnnotation export and guideline text.",
+  "description": "NCBI Disease paper-style moderation run with random sampling of 10 training examples and strict-match stopping at F1 >= 0.9 or no further improvement.",
   "dataset_name": "NCBI Disease",
   "split": "valid",
-  "pubannotation": {
-    "collection_url": "https://pubannotation.org/collections/ncbi-disease-(llm-guideline-moderation)",
-    "project_url": "https://pubannotation.org/projects/ncbi-disease-valid-gpt-r-g",
-    "evaluation_url": "https://pubannotation.org/projects/ncbi-disease-valid-gpt-r-g"
-  },
+  "evaluation_url": "https://pubannotation.org/projects/ncbi-valid",
   "paths": {
-  "input_pubannotation": "data/datasets/ncbi_disease/valid/ncbi-disease-valid-gpt-r-g.pubann.json",
+    "input_pubannotation": "data/datasets/ncbi_disease/valid/8589722.json",
     "guidelines_txt": "data/guidelines/ncbi_disease_guidelines.txt",
     "entity_schema_json": "data/schemas/ncbi_entities.schema.json",
     "output_dir": "outputs"
@@ -21,14 +17,13 @@
     "verified_examples": ""
   },
   "moderation_sampling": {
-    "source_project_url": "",
     "source_dir_path": "data/datasets/ncbi_disease/train",
     "source_split": "train",
     "sampling_method": "random",
     "sample_size": 10,
     "seed": 42,
     "shared_across_models": true,
-    "selection_note": "Replace the seed if needed. For model comparisons, randomly sample 10 training examples from the shared train directory and reuse the same sampled subset for every model."
+    "selection_note": "Randomly sample 10 training examples from the shared NCBI Disease train directory and reuse the same sampled subset across compared models."
   },
   "model": {
     "provider": "openai",

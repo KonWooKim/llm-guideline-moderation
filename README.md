@@ -26,7 +26,7 @@ It does **not** guarantee exact reproduction of the original paper outputs, beca
 - `docs/pubannotation_usage.md`
   PubAnnotation upload and comparison guide
 
-## Datasets and evaluation references
+## Evaluation references
 
 - BC5CDR evaluation: [https://pubannotation.org/projects/bc5cdr-valid](https://pubannotation.org/projects/bc5cdr-valid)
 - BioRED evaluation: [https://pubannotation.org/projects/biored-valid](https://pubannotation.org/projects/biored-valid)
@@ -37,7 +37,7 @@ It does **not** guarantee exact reproduction of the original paper outputs, beca
 1. Randomly sample a train subset from the shared `train/` directory.
 2. Run guideline-conditioned initial annotation on the sampled training documents.
 3. Compare predictions against gold annotations with strict-match F1.
-4. Run the moderation loop until the threshold is reached or the iteration limit is hit.
+4. Run the moderation loop until the score reaches `F1 >= 0.9` or no further improvement is observed.
 5. Save the final refined guideline.
 6. Annotate the valid set with that final guideline.
 7. Upload the resulting PubAnnotation JSON files to your own PubAnnotation project and compare them with the public evaluation project.
@@ -84,11 +84,11 @@ Use the published specs when you want the paper-style train subset size.
 Each spec records:
 
 - dataset and split
-- PubAnnotation links
+- public evaluation reference
 - guideline and schema paths
 - train source directory
 - sampling method, sample size, and seed
-- provider, model, and round count
+- provider and model
 
 If you want a smaller smoke test for local debugging, copy one of these specs and reduce `sample_size` locally.
 

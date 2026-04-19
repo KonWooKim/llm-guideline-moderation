@@ -6,18 +6,11 @@ from pathlib import Path
 
 
 @dataclass(slots=True)
-class PubAnnotationLinks:
-    collection_url: str = ""
-    project_url: str = ""
-    evaluation_url: str = ""
-
-
-@dataclass(slots=True)
 class ExperimentPaths:
-    input_pubannotation: str
     guidelines_txt: str
     entity_schema_json: str
     output_dir: str
+    input_pubannotation: str = ""
 
 
 @dataclass(slots=True)
@@ -30,7 +23,6 @@ class ExperimentEvidence:
 
 @dataclass(slots=True)
 class ModerationSamplingConfig:
-    source_project_url: str = ""
     source_dir_path: str = ""
     source_split: str = ""
     sampling_method: str = ""
@@ -53,7 +45,7 @@ class ExperimentSpec:
     description: str = ""
     dataset_name: str = ""
     split: str = ""
-    pubannotation: PubAnnotationLinks = field(default_factory=PubAnnotationLinks)
+    evaluation_url: str = ""
     paths: ExperimentPaths | None = None
     evidence: ExperimentEvidence = field(default_factory=ExperimentEvidence)
     moderation_sampling: ModerationSamplingConfig = field(default_factory=ModerationSamplingConfig)
@@ -62,12 +54,13 @@ class ExperimentSpec:
     @classmethod
     def from_json_file(cls, path: str | Path) -> "ExperimentSpec":
         payload = json.loads(Path(path).read_text(encoding="utf-8"))
+        pubannotation_payload = payload.get("pubannotation", {})
         return cls(
             experiment_id=payload["experiment_id"],
             description=payload.get("description", ""),
             dataset_name=payload.get("dataset_name", ""),
             split=payload.get("split", ""),
-            pubannotation=PubAnnotationLinks(**payload.get("pubannotation", {})),
+            evaluation_url=payload.get("evaluation_url", pubannotation_payload.get("evaluation_url", "")),
             paths=ExperimentPaths(**payload["paths"]),
             evidence=ExperimentEvidence(**payload.get("evidence", {})),
             moderation_sampling=ModerationSamplingConfig(**payload.get("moderation_sampling", {})),
@@ -80,11 +73,7 @@ class ExperimentSpec:
             "description": self.description,
             "dataset_name": self.dataset_name,
             "split": self.split,
-            "pubannotation": {
-                "collection_url": self.pubannotation.collection_url,
-                "project_url": self.pubannotation.project_url,
-                "evaluation_url": self.pubannotation.evaluation_url,
-            },
+            "evaluation_url": self.evaluation_url,
             "paths": {
                 "input_pubannotation": self.paths.input_pubannotation if self.paths else "",
                 "guidelines_txt": self.paths.guidelines_txt if self.paths else "",
@@ -98,7 +87,6 @@ class ExperimentSpec:
                 "verified_examples": self.evidence.verified_examples,
             },
             "moderation_sampling": {
-                "source_project_url": self.moderation_sampling.source_project_url,
                 "source_dir_path": self.moderation_sampling.source_dir_path,
                 "source_split": self.moderation_sampling.source_split,
                 "sampling_method": self.moderation_sampling.sampling_method,

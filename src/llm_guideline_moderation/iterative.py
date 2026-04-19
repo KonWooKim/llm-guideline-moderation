@@ -14,6 +14,8 @@ from .prompts import render_prompt
 from .sampling import SampledDocument
 from .types import Annotation, EntityDefinition, OutputConfiguration
 
+SAFE_MAX_ITERATIONS = 20
+
 
 @dataclass(slots=True)
 class DiscrepancyExample:
@@ -456,13 +458,9 @@ def run_iterative_refinement(
     *,
     instructions: str = "",
     threshold_f1: float = 0.9,
-    max_iterations: int = 3,
     output_configuration: OutputConfiguration | None = None,
     evaluation_options: PubAnnotationEvaluatorOptions | None = None,
 ) -> IterativeRefinementResult:
-    if max_iterations <= 0:
-        raise ValueError("max_iterations must be at least 1")
-
     output_configuration = output_configuration or OutputConfiguration(
         include_rationale=True,
         include_guideline_section=True,
@@ -491,12 +489,12 @@ def run_iterative_refinement(
     current_summary = initial_summary
     iterations: list[IterationSnapshot] = []
 
-    stop_reason = "max_iterations_reached"
+    stop_reason = "no_improvement"
     threshold_reached = current_summary.is_good_enough
     if threshold_reached:
         stop_reason = "threshold_reached_before_refinement"
 
-    for iteration in range(1, max_iterations + 1):
+    for iteration in range(1, SAFE_MAX_ITERATIONS + 1):
         if threshold_reached:
             break
 
@@ -570,6 +568,8 @@ def run_iterative_refinement(
         if reverted:
             stop_reason = "no_improvement"
             break
+    else:
+        stop_reason = "safety_cap_reached"
 
     return IterativeRefinementResult(
         sampled_documents=[document.filename for document in sampled_documents],

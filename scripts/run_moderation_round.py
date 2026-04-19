@@ -50,7 +50,6 @@ def build_parser() -> argparse.ArgumentParser:
         help="Run only initial annotation, only moderation from existing annotations, or the full pipeline.",
     )
     parser.add_argument("--rounds", type=int, default=1, help="Number of moderation rounds")
-    parser.add_argument("--project-link", default="", help="PubAnnotation project URL for readers")
     parser.add_argument("--evaluation-link", default="", help="PubAnnotation evaluation URL for readers")
     parser.add_argument("--discrepancy-examples", default="", help="Optional discrepancy evidence text")
     parser.add_argument("--true-positive-examples", default="", help="Optional true-positive evidence text")
@@ -83,9 +82,7 @@ def main() -> None:
         provider_name = spec.model.provider
         mode = "full"
         rounds = spec.model.rounds
-        project_link = spec.pubannotation.project_url
-        evaluation_link = spec.pubannotation.evaluation_url
-        collection_link = spec.pubannotation.collection_url
+        evaluation_link = spec.evaluation_url
         discrepancy_examples = spec.evidence.discrepancy_examples
         true_positive_examples = spec.evidence.true_positive_examples
         raw_examples = spec.evidence.raw_examples
@@ -116,9 +113,7 @@ def main() -> None:
         provider_name = args.provider
         mode = args.mode
         rounds = args.rounds
-        project_link = args.project_link
         evaluation_link = args.evaluation_link
-        collection_link = ""
         discrepancy_examples = args.discrepancy_examples
         true_positive_examples = args.true_positive_examples
         raw_examples = args.raw_examples
@@ -263,8 +258,6 @@ def main() -> None:
     write_json(
         layout["links"] / "reader_links.json",
         {
-            "pubannotation_collection": collection_link,
-            "pubannotation_project": project_link,
             "pubannotation_evaluation": evaluation_link,
         },
     )

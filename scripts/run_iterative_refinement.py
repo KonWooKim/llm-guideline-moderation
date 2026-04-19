@@ -28,7 +28,6 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--spec", required=True, help="Path to experiment spec JSON")
     parser.add_argument("--threshold-f1", type=float, default=0.9, help="Target strict-match micro F1 for stopping")
-    parser.add_argument("--max-iterations", type=int, default=3, help="Maximum number of refinement iterations")
     parser.add_argument(
         "--provider",
         choices=["openai", "gemini", "deepseek"],
@@ -79,7 +78,6 @@ def main() -> None:
         entities=entities,
         provider=provider,
         threshold_f1=args.threshold_f1,
-        max_iterations=args.max_iterations,
         output_configuration=OutputConfiguration(
             include_rationale=True,
             include_guideline_section=True,
@@ -110,9 +108,7 @@ def main() -> None:
     write_json(
         layout["links"] / "reader_links.json",
         {
-            "pubannotation_collection": spec.pubannotation.collection_url,
-            "pubannotation_project": spec.pubannotation.project_url,
-            "pubannotation_evaluation": spec.pubannotation.evaluation_url,
+            "pubannotation_evaluation": spec.evaluation_url,
         },
     )
 
