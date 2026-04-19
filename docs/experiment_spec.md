@@ -40,7 +40,7 @@ outputs/<experiment_id>/
 ## Runner Usage
 
 ```bash
-python scripts/run_moderation_round.py --spec examples/experiment_spec.example.json
+python scripts/run_moderation_round.py --spec experiments/bc5cdr_valid_round1.spec.json
 ```
 
 You can still use the direct CLI flags, but `--spec` is the recommended format for published reproduction runs.
@@ -54,7 +54,7 @@ You can still use the direct CLI flags, but `--spec` is the recommended format f
 ## Recommended Moderation Metadata
 
 - `source_project_url`: the PubAnnotation project used as the pool for moderation sampling
-- `source_archive_path`: the local train archive copied into this repository
+- `source_dir_path`: the local train directory copied into this repository
 - `source_split`: usually `train`
 - `sampling_method`: how the subset was chosen
 - `sample_size`: how many examples were used for moderation

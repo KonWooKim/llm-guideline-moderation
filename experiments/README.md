@@ -14,6 +14,6 @@ python scripts/run_moderation_round.py --spec experiments/bc5cdr_valid_round1.sp
 
 Before running:
 
-- unzip the dataset train archive from `data/archives/`
+- use the train files already stored under `data/<dataset>/train/`
 - make sure the input PubAnnotation JSON path in the spec exists
 - make sure your API key is set

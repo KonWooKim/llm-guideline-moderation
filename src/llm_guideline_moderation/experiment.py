@@ -31,7 +31,7 @@ class ExperimentEvidence:
 @dataclass(slots=True)
 class ModerationSamplingConfig:
     source_project_url: str = ""
-    source_archive_path: str = ""
+    source_dir_path: str = ""
     source_split: str = ""
     sampling_method: str = ""
     sample_size: int | None = None
@@ -99,7 +99,7 @@ class ExperimentSpec:
             },
             "moderation_sampling": {
                 "source_project_url": self.moderation_sampling.source_project_url,
-                "source_archive_path": self.moderation_sampling.source_archive_path,
+                "source_dir_path": self.moderation_sampling.source_dir_path,
                 "source_split": self.moderation_sampling.source_split,
                 "sampling_method": self.moderation_sampling.sampling_method,
                 "sample_size": self.moderation_sampling.sample_size,

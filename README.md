@@ -5,7 +5,7 @@ Python code and metadata for rerunning the moderation simulation used in the pap
 ## What this repo is for
 
 - inspect the guideline files used for each dataset
-- inspect the train archives used as the moderation source pool
+- inspect the train files used as the moderation source pool
 - run moderation simulation code with your own API key
 - compare your outputs against the public PubAnnotation evaluation projects
 
@@ -14,7 +14,7 @@ Instead, it provides:
 
 - the public paper artifacts through PubAnnotation links
 - the code path for rerunning similar moderation experiments
-- the shared train archives used for random subset sampling
+- the shared train directories used for random subset sampling
 - the public evaluation references for comparison
 
 ## Dataset references
@@ -25,7 +25,7 @@ Instead, it provides:
 
 ## Reproduction rule used here
 
-- sample from the shared `train` archive
+- sample from the shared `train` directory
 - use `random` sampling
 - use `10` examples
 - reuse the same sampled subset across compared models
@@ -42,7 +42,7 @@ Instead, it provides:
 ## Minimal workflow
 
 1. clone the repository
-2. unzip the train archive for the dataset you want to use
+2. inspect the train files for the dataset you want to use
 3. check the corresponding spec in `experiments/`
 4. set your API key
 5. run `python scripts/run_moderation_round.py --spec <spec>`

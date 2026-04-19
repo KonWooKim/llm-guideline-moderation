@@ -22,13 +22,13 @@
   },
   "moderation_sampling": {
     "source_project_url": "",
-    "source_archive_path": "data/archives/ncbi-train.zip",
+    "source_dir_path": "data/ncbi_disease/train",
     "source_split": "train",
     "sampling_method": "random",
     "sample_size": 10,
     "seed": 42,
     "shared_across_models": true,
-    "selection_note": "Replace the seed if needed. For model comparisons, randomly sample 10 training examples from the shared train archive and reuse the same sampled subset for every model."
+    "selection_note": "Replace the seed if needed. For model comparisons, randomly sample 10 training examples from the shared train directory and reuse the same sampled subset for every model."
   },
   "model": {
     "provider": "openai",

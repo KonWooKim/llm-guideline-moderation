@@ -2,13 +2,13 @@
 
 ## Key Point
 
-This repository treats the train pool as a shared source archive for moderation.
+This repository treats the train pool as a shared source directory for moderation.
 Each moderation run records how its working subset was selected from that larger train pool.
 
 ## What Must Be Recorded Per Run
 
 - `source_project_url`
-- `source_archive_path`
+- `source_dir_path`
 - `source_split`
 - `sampling_method`
 - `sample_size`
@@ -36,7 +36,7 @@ For that reason, the reproducibility target is:
 - `sample_size`: `10`
 - `shared_across_models`: `true`
 - `seed`: record the actual seed used for the paper run or reproduction run
-- `selection_note`: `Randomly sample 10 training examples from the shared train pool and reuse the same sampled subset for every model in this comparison.`
+- `selection_note`: `Randomly sample 10 training examples from the shared train directory and reuse the same sampled subset for every model in this comparison.`
 
 ## Why Shared Sampling Is Preferred
 

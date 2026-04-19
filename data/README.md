@@ -4,10 +4,6 @@ Expected local layout for moderation reproduction:
 
 ```text
 data/
-  archives/
-    bc5cdr-train.zip
-    biored-train.zip
-    ncbi-train.zip
   guidelines/
     ncbi_disease_guidelines.txt
     bc5cdr_guidelines.txt
@@ -17,12 +13,18 @@ data/
     ncbi_entities.schema.json
     biored_entities.schema.json
   ncbi_disease/
+    train/
+      *.json
     valid/
       ncbi-disease-valid-gpt-r-g.pubann.json
   bc5cdr/
+    train/
+      *.json
     valid/
       bc5cdr-valid-gpt-r-g.pubann.json
   biored/
+    train/
+      *.json
     valid/
       biored-valid-gpt-r-g.pubann.json
 ```
