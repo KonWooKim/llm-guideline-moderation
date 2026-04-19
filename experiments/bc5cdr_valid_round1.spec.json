@@ -9,7 +9,7 @@
     "evaluation_url": "https://pubannotation.org/projects/bc5cdr-valid-gpt-r-g"
   },
   "paths": {
-    "input_pubannotation": "data/bc5cdr/valid/bc5cdr-valid-gpt-r-g.pubann.json",
+  "input_pubannotation": "data/datasets/bc5cdr/valid/bc5cdr-valid-gpt-r-g.pubann.json",
     "guidelines_txt": "data/guidelines/bc5cdr_guidelines.txt",
     "entity_schema_json": "data/schemas/bc5cdr_entities.schema.json",
     "output_dir": "outputs"
@@ -22,7 +22,7 @@
   },
   "moderation_sampling": {
     "source_project_url": "",
-    "source_dir_path": "data/bc5cdr/train",
+    "source_dir_path": "data/datasets/bc5cdr/train",
     "source_split": "train",
     "sampling_method": "random",
     "sample_size": 10,

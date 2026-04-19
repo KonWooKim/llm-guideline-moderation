@@ -9,7 +9,7 @@
     "evaluation_url": "https://pubannotation.org/projects/ncbi-disease-valid-gpt-r-g"
   },
   "paths": {
-    "input_pubannotation": "data/ncbi_disease/valid/ncbi-disease-valid-gpt-r-g.pubann.json",
+  "input_pubannotation": "data/datasets/ncbi_disease/valid/ncbi-disease-valid-gpt-r-g.pubann.json",
     "guidelines_txt": "data/guidelines/ncbi_disease_guidelines.txt",
     "entity_schema_json": "data/schemas/ncbi_entities.schema.json",
     "output_dir": "outputs"
@@ -22,7 +22,7 @@
   },
   "moderation_sampling": {
     "source_project_url": "",
-    "source_dir_path": "data/ncbi_disease/train",
+    "source_dir_path": "data/datasets/ncbi_disease/train",
     "source_split": "train",
     "sampling_method": "random",
     "sample_size": 10,

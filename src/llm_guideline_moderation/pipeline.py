@@ -6,6 +6,7 @@ from dataclasses import asdict
 from .prompt_utils import format_sample_sections_for_prompt, generate_schema_parts
 from .prompts import render_prompt
 from .risk import assess_risk
+from .text_utils import align_annotations
 from .types import (
     Annotation,
     AnnotationAuditChange,
@@ -92,8 +93,12 @@ def annotate_with_guidelines(
         rationale_instruction=rationale_instruction,
         input_text=text,
     )
-    return _parse_initial_annotation_result(
+    result = _parse_initial_annotation_result(
         provider.complete("annotate_with_guidelines", prompt)
+    )
+    return InitialAnnotationResult(
+        annotations=align_annotations(text, result.annotations),
+        raw_response=result.raw_response,
     )
 
 
@@ -159,6 +164,11 @@ def simulate_moderation_round(
     )
     moderated = _parse_moderated_annotation_result(
         provider.complete("moderate_annotations", moderate_prompt)
+    )
+    moderated = ModeratedAnnotationResult(
+        annotations=align_annotations(round_input.text, moderated.annotations),
+        changes=moderated.changes,
+        raw_response=moderated.raw_response,
     )
 
     risk = assess_risk(

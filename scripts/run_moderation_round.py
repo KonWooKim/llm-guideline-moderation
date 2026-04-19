@@ -18,6 +18,7 @@ from llm_guideline_moderation.pipeline import (
     run_full_simulation,
     simulate_moderation_iterations,
 )
+from llm_guideline_moderation.providers.deepseek import DeepSeekProvider
 from llm_guideline_moderation.providers.gemini import GeminiProvider
 from llm_guideline_moderation.providers.openai import OpenAIProvider
 from llm_guideline_moderation.pubannotation import (
@@ -40,7 +41,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--guidelines", help="Path to current guidelines text file")
     parser.add_argument("--entities", help="Path to entity schema JSON")
     parser.add_argument("--output-dir", help="Directory for artifacts")
-    parser.add_argument("--provider", default="openai", choices=["openai", "gemini"], help="LLM provider")
+    parser.add_argument("--provider", default="openai", choices=["openai", "gemini", "deepseek"], help="LLM provider")
     parser.add_argument("--model", default="gpt-5", help="OpenAI model name")
     parser.add_argument(
         "--mode",
@@ -63,6 +64,8 @@ def _build_provider(provider_name: str, model_name: str):
         return OpenAIProvider(model=model_name)
     if provider_name == "gemini":
         return GeminiProvider(model=model_name)
+    if provider_name == "deepseek":
+        return DeepSeekProvider(model=model_name)
     raise ValueError(f"Unsupported provider: {provider_name}")
 
 

@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from urllib import error, parse, request
 
 from .base import ModerationProvider
+from ._shared import gemini_response_schema, is_json_task
 
 
 @dataclass(slots=True)
@@ -15,6 +16,7 @@ class GeminiProvider(ModerationProvider):
     temperature: float | None = None
     max_output_tokens: int | None = None
     thinking_budget: int | None = None
+    timeout_seconds: int = 300
     base_url: str = "https://generativelanguage.googleapis.com/v1beta/models"
 
     def __post_init__(self) -> None:
@@ -24,8 +26,6 @@ class GeminiProvider(ModerationProvider):
             raise ValueError("GEMINI_API_KEY is required for GeminiProvider")
 
     def complete(self, task: str, prompt: str) -> str:
-        del task
-
         url = f"{self.base_url}/{self.model}:generateContent?key={parse.quote(self.api_key)}"
         generation_config: dict[str, object] = {}
         if self.temperature is not None:
@@ -34,6 +34,11 @@ class GeminiProvider(ModerationProvider):
             generation_config["maxOutputTokens"] = self.max_output_tokens
         if self.thinking_budget is not None:
             generation_config["thinkingConfig"] = {"thinkingBudget": self.thinking_budget}
+        if is_json_task(task):
+            generation_config["responseMimeType"] = "application/json"
+            schema = gemini_response_schema(task)
+            if schema is not None:
+                generation_config["responseSchema"] = schema
 
         payload: dict[str, object] = {
             "contents": [{"parts": [{"text": prompt}]}],
@@ -49,7 +54,7 @@ class GeminiProvider(ModerationProvider):
         )
 
         try:
-            with request.urlopen(req, timeout=120) as response:
+            with request.urlopen(req, timeout=self.timeout_seconds) as response:
                 body = response.read().decode("utf-8")
         except error.HTTPError as exc:
             detail = exc.read().decode("utf-8", errors="replace")

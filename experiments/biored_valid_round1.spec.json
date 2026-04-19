@@ -9,7 +9,7 @@
     "evaluation_url": "https://pubannotation.org/projects/biored-valid-gpt-r-g"
   },
   "paths": {
-    "input_pubannotation": "data/biored/valid/biored-valid-gpt-r-g.pubann.json",
+  "input_pubannotation": "data/datasets/biored/valid/biored-valid-gpt-r-g.pubann.json",
     "guidelines_txt": "data/guidelines/biored_guidelines.txt",
     "entity_schema_json": "data/schemas/biored_entities.schema.json",
     "output_dir": "outputs"
@@ -22,7 +22,7 @@
   },
   "moderation_sampling": {
     "source_project_url": "",
-    "source_dir_path": "data/biored/train",
+    "source_dir_path": "data/datasets/biored/train",
     "source_split": "train",
     "sampling_method": "random",
     "sample_size": 10,

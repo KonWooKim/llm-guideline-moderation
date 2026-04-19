@@ -43,7 +43,15 @@ outputs/<experiment_id>/
 python scripts/run_moderation_round.py --spec experiments/bc5cdr_valid_round1.spec.json
 ```
 
+For a faster loop check, use a debug spec:
+
+```bash
+python scripts/run_iterative_refinement.py --spec experiments/bc5cdr_debug_round1.spec.json
+```
+
 You can still use the direct CLI flags, but `--spec` is the recommended format for published reproduction runs.
+
+For iterative refinement, the default moderation termination criterion is a strict-match `F1 >= 0.9`, following the paper's stopping rule. You can still override it with `--threshold-f1` when debugging.
 
 ## Recommended Link Policy
 
@@ -54,10 +62,12 @@ You can still use the direct CLI flags, but `--spec` is the recommended format f
 ## Recommended Moderation Metadata
 
 - `source_project_url`: the PubAnnotation project used as the pool for moderation sampling
-- `source_dir_path`: the local train directory copied into this repository
+- `source_dir_path`: the local train directory under `data/datasets/` copied into this repository
 - `source_split`: usually `train`
 - `sampling_method`: how the subset was chosen
 - `sample_size`: how many examples were used for moderation
+- `sample_size = 3`: recommended for quick debug runs
+- `sample_size = 10`: recommended for paper-style reproduction runs
 - `seed`: random seed when applicable
 - `shared_across_models`: whether the same sampled subset is reused across models
 - `selection_note`: any manual rule or filtering note needed to interpret the run
