@@ -353,7 +353,7 @@ def _annotate_documents(
     return predictions
 
 
-def _build_discrepant_examples_from_cluster(cluster: DiscrepancyCluster) -> str:
+def _build_discrepant_examples_from_cluster(cluster: DiscrepancyCluster, n_examples: int) -> str:
     if not cluster.examples:
         return "(no discrepancy examples found)"
     return "\n\n".join(
@@ -365,11 +365,15 @@ def _build_discrepant_examples_from_cluster(cluster: DiscrepancyCluster) -> str:
                 f'Entity Text: "{example.entity_text}"',
             ]
         )
-        for idx, example in enumerate(cluster.examples[:20])
+        for idx, example in enumerate(cluster.examples[:n_examples])
     )
 
 
-def _build_true_positive_examples(sampled_documents: list[SampledDocument], predictions: dict[str, list[Annotation]]) -> str:
+def _build_true_positive_examples(
+    sampled_documents: list[SampledDocument],
+    predictions: dict[str, list[Annotation]],
+    n_examples: int,
+) -> str:
     blocks: list[str] = []
     for document in sampled_documents:
         gold_keys = {_annotation_to_key(annotation): annotation for annotation in document.gold_annotations}
@@ -379,22 +383,19 @@ def _build_true_positive_examples(sampled_documents: list[SampledDocument], pred
         if not matched:
             continue
         lines = [f"FILE: {document.filename}", f"TEXT: {document.text}", "MATCHED ANNOTATIONS:"]
-        lines.extend(f"- {_annotation_summary(annotation)}" for annotation in matched[:10])
+        lines.extend(f"- {_annotation_summary(annotation)}" for annotation in matched[:n_examples])
         blocks.append("\n".join(lines))
-        if len(blocks) >= 5:
+        if len(blocks) >= n_examples:
             break
     return "\n\n".join(blocks) or "(no true positive examples found)"
 
 
-def _build_raw_examples(sampled_documents: list[SampledDocument]) -> str:
-    return "\n\n".join(
-        f"FILE: {document.filename}\nTEXT: {document.text}"
-        for document in sampled_documents[:5]
-    ) or "(no raw examples found)"
-
-
-def _build_verified_examples(sampled_documents: list[SampledDocument], predictions: dict[str, list[Annotation]]) -> str:
-    return _build_true_positive_examples(sampled_documents, predictions)
+def _build_verified_examples(
+    sampled_documents: list[SampledDocument],
+    predictions: dict[str, list[Annotation]],
+    n_examples: int,
+) -> str:
+    return _build_true_positive_examples(sampled_documents, predictions, n_examples)
 
 
 def _refine_guidelines_from_pairs(
@@ -404,21 +405,20 @@ def _refine_guidelines_from_pairs(
     entities: list[EntityDefinition],
     summary: ModerationSummary,
     provider,
+    n_examples: int,
 ) -> tuple[str, str, str, dict[str, str]]:
     dominant_cluster = summary.dominant_cluster
-    discrepancy_examples = _build_discrepant_examples_from_cluster(dominant_cluster)
-    true_positive_examples = _build_true_positive_examples(sampled_documents, predictions)
-    raw_examples = _build_raw_examples(sampled_documents)
-    verified_examples = _build_verified_examples(sampled_documents, predictions)
+    discrepancy_examples = _build_discrepant_examples_from_cluster(dominant_cluster, n_examples)
+    true_positive_examples = _build_true_positive_examples(sampled_documents, predictions, n_examples)
+    verified_examples = _build_verified_examples(sampled_documents, predictions, n_examples)
 
     prompts = {
         "infer_discrepancy_patterns": render_prompt(
-            "infer_discrepancy_patterns",
-            entity_schema=_entity_schema_text(entities),
-            discrepant_examples=discrepancy_examples,
-            true_positive_examples=true_positive_examples,
-            raw_examples=raw_examples,
-        ),
+        "infer_discrepancy_patterns",
+        entity_schema=_entity_schema_text(entities),
+        discrepant_examples=discrepancy_examples,
+        true_positive_examples=true_positive_examples,
+    ),
     }
     discrepancy_insight = provider.complete(
         "infer_discrepancy_patterns",
@@ -458,9 +458,11 @@ def run_iterative_refinement(
     *,
     instructions: str = "",
     threshold_f1: float = 0.9,
+    n_examples: int = 5,
     output_configuration: OutputConfiguration | None = None,
     evaluation_options: PubAnnotationEvaluatorOptions | None = None,
 ) -> IterativeRefinementResult:
+    n_examples = max(1, n_examples)
     output_configuration = output_configuration or OutputConfiguration(
         include_rationale=True,
         include_guideline_section=True,
@@ -510,6 +512,7 @@ def run_iterative_refinement(
             entities=entities,
             summary=current_summary,
             provider=provider,
+            n_examples=n_examples,
         )
 
         refined_predictions = _annotate_documents(

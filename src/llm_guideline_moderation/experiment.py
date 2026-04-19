@@ -10,14 +10,12 @@ class ExperimentPaths:
     guidelines_txt: str
     entity_schema_json: str
     output_dir: str
-    input_pubannotation: str = ""
 
 
 @dataclass(slots=True)
 class ExperimentEvidence:
     discrepancy_examples: str = ""
     true_positive_examples: str = ""
-    raw_examples: str = ""
     verified_examples: str = ""
 
 
@@ -40,6 +38,12 @@ class ExperimentModelConfig:
 
 
 @dataclass(slots=True)
+class ExperimentIterativeConfig:
+    threshold_f1: float = 0.9
+    n_examples: int = 5
+
+
+@dataclass(slots=True)
 class ExperimentSpec:
     experiment_id: str
     description: str = ""
@@ -50,6 +54,7 @@ class ExperimentSpec:
     evidence: ExperimentEvidence = field(default_factory=ExperimentEvidence)
     moderation_sampling: ModerationSamplingConfig = field(default_factory=ModerationSamplingConfig)
     model: ExperimentModelConfig = field(default_factory=ExperimentModelConfig)
+    iterative: ExperimentIterativeConfig = field(default_factory=ExperimentIterativeConfig)
 
     @classmethod
     def from_json_file(cls, path: str | Path) -> "ExperimentSpec":
@@ -65,6 +70,7 @@ class ExperimentSpec:
             evidence=ExperimentEvidence(**payload.get("evidence", {})),
             moderation_sampling=ModerationSamplingConfig(**payload.get("moderation_sampling", {})),
             model=ExperimentModelConfig(**payload.get("model", {})),
+            iterative=ExperimentIterativeConfig(**payload.get("iterative", {})),
         )
 
     def to_json_dict(self) -> dict:
@@ -75,7 +81,6 @@ class ExperimentSpec:
             "split": self.split,
             "evaluation_url": self.evaluation_url,
             "paths": {
-                "input_pubannotation": self.paths.input_pubannotation if self.paths else "",
                 "guidelines_txt": self.paths.guidelines_txt if self.paths else "",
                 "entity_schema_json": self.paths.entity_schema_json if self.paths else "",
                 "output_dir": self.paths.output_dir if self.paths else "",
@@ -83,7 +88,6 @@ class ExperimentSpec:
             "evidence": {
                 "discrepancy_examples": self.evidence.discrepancy_examples,
                 "true_positive_examples": self.evidence.true_positive_examples,
-                "raw_examples": self.evidence.raw_examples,
                 "verified_examples": self.evidence.verified_examples,
             },
             "moderation_sampling": {
@@ -99,5 +103,9 @@ class ExperimentSpec:
                 "provider": self.model.provider,
                 "model": self.model.model,
                 "rounds": self.model.rounds,
+            },
+            "iterative": {
+                "threshold_f1": self.iterative.threshold_f1,
+                "n_examples": self.iterative.n_examples,
             },
         }

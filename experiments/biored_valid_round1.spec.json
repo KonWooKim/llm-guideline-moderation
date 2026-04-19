@@ -5,7 +5,6 @@
   "split": "valid",
   "evaluation_url": "https://pubannotation.org/projects/biored-valid",
   "paths": {
-    "input_pubannotation": "data/datasets/biored/valid/14510914.json",
     "guidelines_txt": "data/guidelines/biored_guidelines.txt",
     "entity_schema_json": "data/schemas/biored_entities.schema.json",
     "output_dir": "outputs"
@@ -13,7 +12,6 @@
   "evidence": {
     "discrepancy_examples": "",
     "true_positive_examples": "",
-    "raw_examples": "",
     "verified_examples": ""
   },
   "moderation_sampling": {
@@ -29,5 +27,9 @@
     "provider": "openai",
     "model": "gpt-5",
     "rounds": 1
+  },
+  "iterative": {
+    "threshold_f1": 0.9,
+    "n_examples": 5
   }
 }

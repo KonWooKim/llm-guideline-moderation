@@ -47,6 +47,7 @@ Repository defaults:
 - paper-style reproduction: `sample_size = 10`
 - fixed random seed recorded in each spec
 - shared sampled subset across compared models
+- prompt evidence cap: `n_examples = 5`
 - moderation termination threshold: strict-match `F1 >= 0.9`
 
 ## Quick start
@@ -89,6 +90,7 @@ Each spec records:
 - train source directory
 - sampling method, sample size, and seed
 - provider and model
+- iterative stopping threshold and prompt example cap
 
 If you want a smaller smoke test for local debugging, copy one of these specs and reduce `sample_size` locally.
 

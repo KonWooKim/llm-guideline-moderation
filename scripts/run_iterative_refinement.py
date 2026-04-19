@@ -27,7 +27,8 @@ def build_parser() -> argparse.ArgumentParser:
         description="Run iterative guideline refinement on a random train subset."
     )
     parser.add_argument("--spec", required=True, help="Path to experiment spec JSON")
-    parser.add_argument("--threshold-f1", type=float, default=0.9, help="Target strict-match micro F1 for stopping")
+    parser.add_argument("--threshold-f1", type=float, help="Override the strict-match micro F1 stopping threshold from the spec")
+    parser.add_argument("--n-examples", type=int, help="Override the prompt evidence example count from the spec")
     parser.add_argument(
         "--provider",
         choices=["openai", "gemini", "deepseek"],
@@ -58,6 +59,8 @@ def main() -> None:
     source_dir = spec.moderation_sampling.source_dir_path
     sample_size = spec.moderation_sampling.sample_size or 10
     seed = spec.moderation_sampling.seed
+    threshold_f1 = args.threshold_f1 if args.threshold_f1 is not None else spec.iterative.threshold_f1
+    n_examples = args.n_examples if args.n_examples is not None else spec.iterative.n_examples
 
     guidelines = Path(spec.paths.guidelines_txt).read_text(encoding="utf-8")
     entity_rows = json.loads(Path(spec.paths.entity_schema_json).read_text(encoding="utf-8"))
@@ -77,7 +80,8 @@ def main() -> None:
         guidelines=guidelines,
         entities=entities,
         provider=provider,
-        threshold_f1=args.threshold_f1,
+        threshold_f1=threshold_f1,
+        n_examples=n_examples,
         output_configuration=OutputConfiguration(
             include_rationale=True,
             include_guideline_section=True,

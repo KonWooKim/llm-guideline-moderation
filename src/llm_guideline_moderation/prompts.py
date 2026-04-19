@@ -124,7 +124,6 @@ Your goal is to analyze **ONE Dominant Discrepancy Case** (a specific recurring 
 **INPUT DATA:**
 1. **Discrepancies (The Problem)**: Examples of the specific error type we are solving.
 2. **True Positives (The Control)**: Correct examples where the model worked (for contrast).
-3. **Raw Corpus Context**: Unlabeled text showing similar usage.
 
 ---
 **1. DISCREPANCIES TO ANALYZE:**
@@ -132,9 +131,6 @@ Your goal is to analyze **ONE Dominant Discrepancy Case** (a specific recurring 
 
 **2. TRUE POSITIVE EXAMPLES (For Contrast):**
 {true_positive_examples}
-
-**3. RAW CORPUS CONTEXT:**
-{raw_examples}
 ---
 
 **TASK:**
