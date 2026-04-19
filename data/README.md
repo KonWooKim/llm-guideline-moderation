@@ -27,4 +27,4 @@ data/
       biored-valid-gpt-r-g.pubann.json
 ```
 
-Keep the large or private source exports out of version control if needed, but preserve the paths used by the experiment specs.
+Schema files are simple JSON arrays of entity names.

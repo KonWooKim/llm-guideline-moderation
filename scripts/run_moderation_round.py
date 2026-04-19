@@ -115,7 +115,10 @@ def main() -> None:
     guidelines = Path(guidelines_path).read_text(encoding="utf-8")
     entity_rows = json.loads(Path(entities_path).read_text(encoding="utf-8"))
 
-    entities = [EntityDefinition(**row) for row in entity_rows]
+    entities = [
+        EntityDefinition(name=row) if isinstance(row, str) else EntityDefinition(**row)
+        for row in entity_rows
+    ]
     initial_annotations = pubannotation_to_annotations(input_doc)
 
     provider = _build_provider(provider_name, model_name)

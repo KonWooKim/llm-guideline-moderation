@@ -1,18 +1,6 @@
 [
-  {
-    "name": "SpecificDisease",
-    "description": "A mention of a specific disease in the NCBI disease annotation scheme."
-  },
-  {
-    "name": "DiseaseClass",
-    "description": "A disease class or category mention in the NCBI disease annotation scheme."
-  },
-  {
-    "name": "Modifier",
-    "description": "A modifier mention used in the NCBI disease annotation scheme."
-  },
-  {
-    "name": "CompositeMention",
-    "description": "A composite disease mention in the NCBI disease annotation scheme."
-  }
+  "SpecificDisease",
+  "DiseaseClass",
+  "Modifier",
+  "CompositeMention"
 ]

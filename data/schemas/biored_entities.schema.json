@@ -1,26 +1,8 @@
 [
-  {
-    "name": "GeneOrGeneProduct",
-    "description": "A gene or gene product mention in BioRED."
-  },
-  {
-    "name": "DiseaseOrPhenotypicFeature",
-    "description": "A disease or phenotypic feature mention in BioRED."
-  },
-  {
-    "name": "ChemicalEntity",
-    "description": "A chemical or drug mention in BioRED."
-  },
-  {
-    "name": "SequenceVariant",
-    "description": "A sequence variant mention in BioRED."
-  },
-  {
-    "name": "CellLine",
-    "description": "A cell line mention in BioRED."
-  },
-  {
-    "name": "OrganismTaxon",
-    "description": "An organism or species mention in BioRED."
-  }
+  "GeneOrGeneProduct",
+  "DiseaseOrPhenotypicFeature",
+  "ChemicalEntity",
+  "SequenceVariant",
+  "CellLine",
+  "OrganismTaxon"
 ]

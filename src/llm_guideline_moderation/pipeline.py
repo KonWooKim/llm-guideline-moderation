@@ -22,7 +22,13 @@ GUIDELINES_SENTINEL = "__REFINED_GUIDELINES__"
 
 
 def _entity_schema_text(entities) -> str:
-    return "\n".join(f"- {entity.name}: {entity.description}" for entity in entities)
+    lines = []
+    for entity in entities:
+        if entity.description:
+            lines.append(f"- {entity.name}: {entity.description}")
+        else:
+            lines.append(f"- {entity.name}")
+    return "\n".join(lines)
 
 
 def _annotation_json(annotations: list[Annotation]) -> str:

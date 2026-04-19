@@ -7,7 +7,7 @@ from typing import Any, Literal
 @dataclass(slots=True)
 class EntityDefinition:
     name: str
-    description: str
+    description: str = ""
 
 
 @dataclass(slots=True)
