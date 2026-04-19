@@ -1,0 +1,38 @@
+{
+  "experiment_id": "biored_valid_gpt_r_g_round1",
+  "description": "BioRED moderation simulation run. Replace placeholder file contents with the actual PubAnnotation export and guideline text.",
+  "dataset_name": "BioRED",
+  "split": "valid",
+  "pubannotation": {
+    "collection_url": "https://pubannotation.org/collections/biored-(llm-guideline-moderation)",
+    "project_url": "https://pubannotation.org/projects/biored-valid-gpt-r-g",
+    "evaluation_url": "https://pubannotation.org/projects/biored-valid-gpt-r-g"
+  },
+  "paths": {
+    "input_pubannotation": "data/biored/valid/biored-valid-gpt-r-g.pubann.json",
+    "guidelines_txt": "data/guidelines/biored_guidelines.txt",
+    "entity_schema_json": "data/schemas/biored_entities.schema.json",
+    "output_dir": "outputs"
+  },
+  "evidence": {
+    "discrepancy_examples": "",
+    "true_positive_examples": "",
+    "raw_examples": "",
+    "verified_examples": ""
+  },
+  "moderation_sampling": {
+    "source_project_url": "",
+    "source_archive_path": "data/archives/biored-train.zip",
+    "source_split": "train",
+    "sampling_method": "random",
+    "sample_size": 10,
+    "seed": 42,
+    "shared_across_models": true,
+    "selection_note": "Replace the seed if needed. For model comparisons, randomly sample 10 training examples from the shared train archive and reuse the same sampled subset for every model."
+  },
+  "model": {
+    "provider": "openai",
+    "model": "gpt-5",
+    "rounds": 1
+  }
+}

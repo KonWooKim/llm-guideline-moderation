@@ -1,0 +1,115 @@
+from __future__ import annotations
+
+import json
+from dataclasses import dataclass, field
+from pathlib import Path
+
+
+@dataclass(slots=True)
+class PubAnnotationLinks:
+    collection_url: str = ""
+    project_url: str = ""
+    evaluation_url: str = ""
+
+
+@dataclass(slots=True)
+class ExperimentPaths:
+    input_pubannotation: str
+    guidelines_txt: str
+    entity_schema_json: str
+    output_dir: str
+
+
+@dataclass(slots=True)
+class ExperimentEvidence:
+    discrepancy_examples: str = ""
+    true_positive_examples: str = ""
+    raw_examples: str = ""
+    verified_examples: str = ""
+
+
+@dataclass(slots=True)
+class ModerationSamplingConfig:
+    source_project_url: str = ""
+    source_archive_path: str = ""
+    source_split: str = ""
+    sampling_method: str = ""
+    sample_size: int | None = None
+    seed: int | None = None
+    shared_across_models: bool = True
+    selection_note: str = ""
+
+
+@dataclass(slots=True)
+class ExperimentModelConfig:
+    provider: str = "openai"
+    model: str = "gpt-5"
+    rounds: int = 1
+
+
+@dataclass(slots=True)
+class ExperimentSpec:
+    experiment_id: str
+    description: str = ""
+    dataset_name: str = ""
+    split: str = ""
+    pubannotation: PubAnnotationLinks = field(default_factory=PubAnnotationLinks)
+    paths: ExperimentPaths | None = None
+    evidence: ExperimentEvidence = field(default_factory=ExperimentEvidence)
+    moderation_sampling: ModerationSamplingConfig = field(default_factory=ModerationSamplingConfig)
+    model: ExperimentModelConfig = field(default_factory=ExperimentModelConfig)
+
+    @classmethod
+    def from_json_file(cls, path: str | Path) -> "ExperimentSpec":
+        payload = json.loads(Path(path).read_text(encoding="utf-8"))
+        return cls(
+            experiment_id=payload["experiment_id"],
+            description=payload.get("description", ""),
+            dataset_name=payload.get("dataset_name", ""),
+            split=payload.get("split", ""),
+            pubannotation=PubAnnotationLinks(**payload.get("pubannotation", {})),
+            paths=ExperimentPaths(**payload["paths"]),
+            evidence=ExperimentEvidence(**payload.get("evidence", {})),
+            moderation_sampling=ModerationSamplingConfig(**payload.get("moderation_sampling", {})),
+            model=ExperimentModelConfig(**payload.get("model", {})),
+        )
+
+    def to_json_dict(self) -> dict:
+        return {
+            "experiment_id": self.experiment_id,
+            "description": self.description,
+            "dataset_name": self.dataset_name,
+            "split": self.split,
+            "pubannotation": {
+                "collection_url": self.pubannotation.collection_url,
+                "project_url": self.pubannotation.project_url,
+                "evaluation_url": self.pubannotation.evaluation_url,
+            },
+            "paths": {
+                "input_pubannotation": self.paths.input_pubannotation if self.paths else "",
+                "guidelines_txt": self.paths.guidelines_txt if self.paths else "",
+                "entity_schema_json": self.paths.entity_schema_json if self.paths else "",
+                "output_dir": self.paths.output_dir if self.paths else "",
+            },
+            "evidence": {
+                "discrepancy_examples": self.evidence.discrepancy_examples,
+                "true_positive_examples": self.evidence.true_positive_examples,
+                "raw_examples": self.evidence.raw_examples,
+                "verified_examples": self.evidence.verified_examples,
+            },
+            "moderation_sampling": {
+                "source_project_url": self.moderation_sampling.source_project_url,
+                "source_archive_path": self.moderation_sampling.source_archive_path,
+                "source_split": self.moderation_sampling.source_split,
+                "sampling_method": self.moderation_sampling.sampling_method,
+                "sample_size": self.moderation_sampling.sample_size,
+                "seed": self.moderation_sampling.seed,
+                "shared_across_models": self.moderation_sampling.shared_across_models,
+                "selection_note": self.moderation_sampling.selection_note,
+            },
+            "model": {
+                "provider": self.model.provider,
+                "model": self.model.model,
+                "rounds": self.model.rounds,
+            },
+        }

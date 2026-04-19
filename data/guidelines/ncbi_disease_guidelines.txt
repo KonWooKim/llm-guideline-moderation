@@ -1,0 +1,3 @@
+PLACEHOLDER
+
+Replace this file with the actual NCBI Disease guideline text used for the moderation experiment.

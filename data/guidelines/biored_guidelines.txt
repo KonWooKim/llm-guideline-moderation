@@ -1,0 +1,3 @@
+PLACEHOLDER
+
+Replace this file with the actual BioRED guideline text used for the moderation experiment.

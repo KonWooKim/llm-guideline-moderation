@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Chemical",
+    "description": "A chemical entity mention in BC5CDR."
+  },
+  {
+    "name": "Disease",
+    "description": "A disease mention in BC5CDR."
+  }
+]
+  }
+]
