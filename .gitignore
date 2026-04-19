@@ -3,3 +3,4 @@ __pycache__/
 .tmp_test_runs/
 outputs/
 tests/
+examples/

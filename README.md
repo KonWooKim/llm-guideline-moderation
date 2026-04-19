@@ -1,66 +1,101 @@
 # llm-guideline-moderation
 
-Python code and metadata for rerunning the moderation simulation used in the paper.
+Python code and dataset metadata for rerunning the moderation simulation workflow from the paper and comparing outputs through PubAnnotation.
 
-## What this repo is for
+This repository is meant to support:
 
-- inspect the guideline files used for each dataset
-- inspect the train files used as the moderation source pool
-- run iterative guideline refinement with your own API key
-- annotate a valid/evaluation set with the final refined guidelines
-- compare your outputs against the public PubAnnotation evaluation projects
+- inspection of the original dataset guidelines and entity sets
+- rerunning the moderation loop with your own API key
+- annotating the provided valid sets with the final refined guideline
+- uploading outputs to PubAnnotation for side-by-side comparison with the public evaluation projects
 
-This repository does **not** guarantee exact reproduction of the paper's original LLM outputs.
-Instead, it provides:
+It does **not** guarantee exact reproduction of the original paper outputs, because LLM responses are not deterministic across providers, models, and time. The goal here is reproducible workflow, shared input data, and transparent comparison.
 
-- the public paper artifacts through PubAnnotation links
-- the code path for rerunning similar moderation experiments
-- the shared dataset directories used for random subset sampling
-- the public evaluation references for comparison
+## Included resources
 
-## Dataset references
-
-- BioRED evaluation: [https://pubannotation.org/projects/biored-valid](https://pubannotation.org/projects/biored-valid)
-- BC5CDR evaluation: [https://pubannotation.org/projects/bc5cdr-valid](https://pubannotation.org/projects/bc5cdr-valid)
-- NCBI evaluation: [https://pubannotation.org/projects/ncbi-valid](https://pubannotation.org/projects/ncbi-valid)
-
-## Reproduction rule used here
-
-- sample from the shared `train` directory
-- use `random` sampling
-- use `10` examples for paper-style reproduction runs
-- use `3` examples for quick debug runs
-- use a strict-match moderation termination threshold of `F1 >= 0.9`
-- reuse the same sampled subset across compared models
-- record the `seed` and sampling metadata in the experiment spec
-
-## Key files
-
-- `src/llm_guideline_moderation/`
+- `data/datasets/`
+  train pools used for moderation sampling and valid sets used for final annotation
+- `data/guidelines/`
+  dataset guideline text files
+- `data/schemas/`
+  entity label lists
 - `experiments/`
-- `data/`
-- `docs/experiment_spec.md`
-- `docs/moderation_sampling.md`
+  runnable experiment specs
+- `scripts/`
+  command-line entry points for iterative refinement and valid-set annotation
 - `docs/pubannotation_usage.md`
+  PubAnnotation upload and comparison guide
 
-## Recommended workflow
+## Datasets and evaluation references
 
-1. clone the repository
-2. inspect the dataset files under `data/datasets/` for the dataset you want to use
-3. start with a debug spec in `experiments/` if you want a quick loop check
-4. switch to the main spec once the provider, prompts, and evaluation flow look stable
-5. set your API key
-6. run `python scripts/run_iterative_refinement.py --spec <spec>`
-7. take the resulting `final_guidelines.txt`
-8. run `python scripts/annotate_pubannotation_dir.py --input-dir <valid_dir> --guidelines <final_guidelines.txt> --entities <schema.json> --output-dir <output_dir>`
-9. upload the output JSON files to PubAnnotation and compare them with the public evaluation project
+- BC5CDR evaluation: [https://pubannotation.org/projects/bc5cdr-valid](https://pubannotation.org/projects/bc5cdr-valid)
+- BioRED evaluation: [https://pubannotation.org/projects/biored-valid](https://pubannotation.org/projects/biored-valid)
+- NCBI Disease evaluation: [https://pubannotation.org/projects/ncbi-valid](https://pubannotation.org/projects/ncbi-valid)
 
-For upload and comparison details, see:
+## Workflow used in this repo
 
-- `docs/pubannotation_usage.md`
+1. Randomly sample a train subset from the shared `train/` directory.
+2. Run guideline-conditioned initial annotation on the sampled training documents.
+3. Compare predictions against gold annotations with strict-match F1.
+4. Run the moderation loop until the threshold is reached or the iteration limit is hit.
+5. Save the final refined guideline.
+6. Annotate the valid set with that final guideline.
+7. Upload the resulting PubAnnotation JSON files to your own PubAnnotation project and compare them with the public evaluation project.
 
-## Quick test vs reproduction
+Repository defaults:
 
-- quick debug run: use `*_debug_round1.spec.json` with `sample_size = 3`
-- paper-style run: use `*_valid_round1.spec.json` with `sample_size = 10`
-- both keep the seed fixed so the same sampled subset can be reused across models
+- paper-style reproduction: `sample_size = 10`
+- quick smoke test: `sample_size = 3`
+- fixed random seed recorded in each spec
+- shared sampled subset across compared models
+- moderation termination threshold: strict-match `F1 >= 0.9`
+
+## Quick start
+
+Set your provider API key first, then start with a debug spec.
+
+```bash
+python scripts/run_iterative_refinement.py --spec experiments/bc5cdr_debug_round1.spec.json --provider gemini --model gemini-2.5-flash
+```
+
+That run writes a `final_guidelines.txt` file under `outputs/<experiment_id>_iterative/final/`.
+
+Then annotate a valid set:
+
+```bash
+python scripts/annotate_pubannotation_dir.py --input-dir data/datasets/bc5cdr/valid --guidelines outputs/bc5cdr_valid_gpt_r_g_debug_round1_iterative/final/final_guidelines.txt --entities data/schemas/bc5cdr_entities.schema.json --output-dir outputs/bc5cdr_valid_annotations --provider gemini --model gemini-2.5-flash
+```
+
+## Specs
+
+Use the debug specs first if you want to verify provider setup, prompt formatting, scoring, and PubAnnotation output cheaply.
+
+- `experiments/bc5cdr_debug_round1.spec.json`
+- `experiments/biored_debug_round1.spec.json`
+- `experiments/ncbi_disease_debug_round1.spec.json`
+
+Use the main specs when you want the paper-style train subset size.
+
+- `experiments/bc5cdr_valid_round1.spec.json`
+- `experiments/biored_valid_round1.spec.json`
+- `experiments/ncbi_disease_valid_round1.spec.json`
+
+Each spec records:
+
+- dataset and split
+- PubAnnotation links
+- guideline and schema paths
+- train source directory
+- sampling method, sample size, and seed
+- provider, model, and round count
+
+## PubAnnotation comparison
+
+The final outputs produced by this repo are already in PubAnnotation JSON format. The intended flow is:
+
+1. create your own PubAnnotation project for the dataset
+2. upload the JSON files generated by this repo
+3. open the corresponding public evaluation project
+4. compare the same `sourcedb/sourceid` entries across projects
+
+Detailed instructions are in [docs/pubannotation_usage.md](docs/pubannotation_usage.md).
