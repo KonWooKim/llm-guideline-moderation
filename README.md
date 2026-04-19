@@ -151,13 +151,49 @@ Detailed instructions are in [docs/pubannotation_usage.md](docs/pubannotation_us
 
 For transparency and manual inspection, the PubAnnotation space used with this project includes result variants produced with different annotation settings and models.
 
-In particular, the released comparison setup includes outputs corresponding to:
+The released comparison setup uses the following project naming scheme:
 
-- no guidelines
-- original guidelines
-- moderated / refined guidelines
+`{dataset}-valid-{model}-{reasoning}-{condition}`
 
-across the models used in the experiments.
+- `dataset`: `bc5cdr`, `ncbi`, `biored`
+- `model`: `gpt`, `gemini`, `deepseek`
+- `reasoning`: `nr` (non-reasoning) or `r` (reasoning)
+- `condition`: `ng` (no guideline), `g` (guideline), or `m` (moderated)
+- note: `nr` runs do not have the `m` condition
+
+That means each model contributes five published result variants:
+
+- `nr-ng`
+- `nr-g`
+- `r-ng`
+- `r-g`
+- `r-m`
+
+If you open any of the PubAnnotation project links below and scroll down to the **Evaluations** section, you can inspect the evaluation values corresponding to the results reported in the paper tables.
+
+### BC5CDR
+
+| Model | NR-NG | NR-G | R-NG | R-G | R-M |
+| --- | --- | --- | --- | --- | --- |
+| GPT | [bc5cdr-valid-gpt-nr-ng](https://pubannotation.org/projects/bc5cdr-valid-gpt-nr-ng) | [bc5cdr-valid-gpt-nr-g](https://pubannotation.org/projects/bc5cdr-valid-gpt-nr-g) | [bc5cdr-valid-gpt-r-ng](https://pubannotation.org/projects/bc5cdr-valid-gpt-r-ng) | [bc5cdr-valid-gpt-r-g](https://pubannotation.org/projects/bc5cdr-valid-gpt-r-g) | [bc5cdr-valid-gpt-r-m](https://pubannotation.org/projects/bc5cdr-valid-gpt-r-m) |
+| Gemini | [bc5cdr-valid-gemini-nr-ng](https://pubannotation.org/projects/bc5cdr-valid-gemini-nr-ng) | [bc5cdr-valid-gemini-nr-g](https://pubannotation.org/projects/bc5cdr-valid-gemini-nr-g) | [bc5cdr-valid-gemini-r-ng](https://pubannotation.org/projects/bc5cdr-valid-gemini-r-ng) | [bc5cdr-valid-gemini-r-g](https://pubannotation.org/projects/bc5cdr-valid-gemini-r-g) | [bc5cdr-valid-gemini-r-m](https://pubannotation.org/projects/bc5cdr-valid-gemini-r-m) |
+| DeepSeek | [bc5cdr-valid-deepseek-nr-ng](https://pubannotation.org/projects/bc5cdr-valid-deepseek-nr-ng) | [bc5cdr-valid-deepseek-nr-g](https://pubannotation.org/projects/bc5cdr-valid-deepseek-nr-g) | [bc5cdr-valid-deepseek-r-ng](https://pubannotation.org/projects/bc5cdr-valid-deepseek-r-ng) | [bc5cdr-valid-deepseek-r-g](https://pubannotation.org/projects/bc5cdr-valid-deepseek-r-g) | [bc5cdr-valid-deepseek-r-m](https://pubannotation.org/projects/bc5cdr-valid-deepseek-r-m) |
+
+### NCBI Disease
+
+| Model | NR-NG | NR-G | R-NG | R-G | R-M |
+| --- | --- | --- | --- | --- | --- |
+| GPT | [ncbi-valid-gpt-nr-ng](https://pubannotation.org/projects/ncbi-valid-gpt-nr-ng) | [ncbi-valid-gpt-nr-g](https://pubannotation.org/projects/ncbi-valid-gpt-nr-g) | [ncbi-valid-gpt-r-ng](https://pubannotation.org/projects/ncbi-valid-gpt-r-ng) | [ncbi-valid-gpt-r-g](https://pubannotation.org/projects/ncbi-valid-gpt-r-g) | [ncbi-valid-gpt-r-m](https://pubannotation.org/projects/ncbi-valid-gpt-r-m) |
+| Gemini | [ncbi-valid-gemini-nr-ng](https://pubannotation.org/projects/ncbi-valid-gemini-nr-ng) | [ncbi-valid-gemini-nr-g](https://pubannotation.org/projects/ncbi-valid-gemini-nr-g) | [ncbi-valid-gemini-r-ng](https://pubannotation.org/projects/ncbi-valid-gemini-r-ng) | [ncbi-valid-gemini-r-g](https://pubannotation.org/projects/ncbi-valid-gemini-r-g) | [ncbi-valid-gemini-r-m](https://pubannotation.org/projects/ncbi-valid-gemini-r-m) |
+| DeepSeek | [ncbi-valid-deepseek-nr-ng](https://pubannotation.org/projects/ncbi-valid-deepseek-nr-ng) | [ncbi-valid-deepseek-nr-g](https://pubannotation.org/projects/ncbi-valid-deepseek-nr-g) | [ncbi-valid-deepseek-r-ng](https://pubannotation.org/projects/ncbi-valid-deepseek-r-ng) | [ncbi-valid-deepseek-r-g](https://pubannotation.org/projects/ncbi-valid-deepseek-r-g) | [ncbi-valid-deepseek-r-m](https://pubannotation.org/projects/ncbi-valid-deepseek-r-m) |
+
+### BioRED
+
+| Model | NR-NG | NR-G | R-NG | R-G | R-M |
+| --- | --- | --- | --- | --- | --- |
+| GPT | [biored-valid-gpt-nr-ng](https://pubannotation.org/projects/biored-valid-gpt-nr-ng) | [biored-valid-gpt-nr-g](https://pubannotation.org/projects/biored-valid-gpt-nr-g) | [biored-valid-gpt-r-ng](https://pubannotation.org/projects/biored-valid-gpt-r-ng) | [biored-valid-gpt-r-g](https://pubannotation.org/projects/biored-valid-gpt-r-g) | [biored-valid-gpt-r-m](https://pubannotation.org/projects/biored-valid-gpt-r-m) |
+| Gemini | [biored-valid-gemini-nr-ng](https://pubannotation.org/projects/biored-valid-gemini-nr-ng) | [biored-valid-gemini-nr-g](https://pubannotation.org/projects/biored-valid-gemini-nr-g) | [biored-valid-gemini-r-ng](https://pubannotation.org/projects/biored-valid-gemini-r-ng) | [biored-valid-gemini-r-g](https://pubannotation.org/projects/biored-valid-gemini-r-g) | [biored-valid-gemini-r-m](https://pubannotation.org/projects/biored-valid-gemini-r-m) |
+| DeepSeek | [biored-valid-deepseek-nr-ng](https://pubannotation.org/projects/biored-valid-deepseek-nr-ng) | [biored-valid-deepseek-nr-g](https://pubannotation.org/projects/biored-valid-deepseek-nr-g) | [biored-valid-deepseek-r-ng](https://pubannotation.org/projects/biored-valid-deepseek-r-ng) | [biored-valid-deepseek-r-g](https://pubannotation.org/projects/biored-valid-deepseek-r-g) | [biored-valid-deepseek-r-m](https://pubannotation.org/projects/biored-valid-deepseek-r-m) |
 
 The intended use of this repository is:
 
