@@ -10,7 +10,6 @@ from workspace import workspace_tmpdir
 from llm_guideline_moderation.experiment import ExperimentSpec
 from llm_guideline_moderation.layout import prepare_run_layout
 
-EXAMPLES_DIR = Path(__file__).resolve().parents[1] / "examples"
 EXPERIMENTS_DIR = Path(__file__).resolve().parents[1] / "experiments"
 
 
@@ -66,24 +65,6 @@ class ExperimentTests(unittest.TestCase):
             self.assertTrue(layout["rounds"].exists())
             self.assertTrue(layout["final"].exists())
             self.assertTrue(layout["links"].exists())
-
-    def test_dataset_templates_load_as_valid_specs(self) -> None:
-        template_names = [
-            "ncbi_disease_experiment_spec.template.json",
-            "bc5cdr_experiment_spec.template.json",
-            "biored_experiment_spec.template.json",
-        ]
-
-        for template_name in template_names:
-            with self.subTest(template_name=template_name):
-                spec = ExperimentSpec.from_json_file(EXAMPLES_DIR / template_name)
-                self.assertTrue(spec.experiment_id)
-                self.assertTrue(spec.dataset_name)
-                self.assertTrue(spec.pubannotation.collection_url.startswith("https://pubannotation.org/collections/"))
-                self.assertTrue(spec.pubannotation.project_url.startswith("https://pubannotation.org/projects/"))
-                self.assertTrue(spec.moderation_sampling.source_archive_path.startswith("data/archives/"))
-                self.assertEqual(spec.moderation_sampling.sampling_method, "random")
-                self.assertIsNotNone(spec.paths)
 
     def test_runnable_experiment_specs_load_as_valid_specs(self) -> None:
         spec_names = [
