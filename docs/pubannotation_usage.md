@@ -1,21 +1,68 @@
-# PubAnnotation upload and comparison
+# PubAnnotation Upload And Evaluation Guide
 
-This repository intentionally stops at producing PubAnnotation-format JSON files. Final visual inspection and comparison are meant to happen in PubAnnotation.
+This repository stops at producing **PubAnnotation-format prediction files**. The final comparison step is intentionally done in PubAnnotation.
 
-## Recommended workflow
+## The Intended Division Of Labor
 
-1. Run iterative refinement on a sampled train subset.
+This repository is responsible for:
+
+- running guideline refinement on sampled train documents
+- generating a final refined guideline
+- annotating the valid set with that guideline
+- exporting one PubAnnotation JSON file per document
+
+PubAnnotation is responsible for:
+
+- hosting your uploaded prediction project
+- hosting the public evaluation project
+- letting you inspect the same documents across projects
+
+In short:
+
+- this repo = execution and export
+- PubAnnotation = inspection and comparison
+
+## Recommended End-To-End Flow
+
+1. Run iterative refinement with one of the published specs.
 2. Take the resulting `final_guidelines.txt`.
-3. Annotate the valid set with `scripts/annotate_pubannotation_dir.py`.
-4. Upload the generated JSON files to your own PubAnnotation project.
-5. Compare your project with the public evaluation project for the same dataset.
+3. Annotate the full valid set with `scripts/annotate_pubannotation_dir.py`.
+4. Create your own PubAnnotation project for the target dataset.
+5. Upload the generated JSON files into that project.
+6. Open the matching public evaluation project.
+7. Compare the same documents using `sourcedb` and `sourceid`.
 
-## Before you upload
+## What The Repo Outputs
 
-Make sure all three of these are aligned:
+After valid-set annotation, the output directory looks like this:
 
-- the documents in your PubAnnotation project
-- the local JSON files produced by this repo
+```text
+outputs/<run_name>/
+  10074612.json
+  10539815.json
+  10840460.json
+  ...
+```
+
+Each file is already a PubAnnotation document with fields such as:
+
+- `text`
+- `sourcedb`
+- `sourceid`
+- `denotations`
+
+That means you do **not** need to convert the format before upload.
+
+Reference:
+
+- [PubAnnotation annotation format](https://www.pubannotation.org/docs/annotation-format/)
+
+## The Most Important Identity Check
+
+Before uploading, make sure these three things are aligned:
+
+- the files you generated locally
+- the project you create in PubAnnotation
 - the public evaluation project you want to compare against
 
 The important identity fields are:
@@ -23,42 +70,39 @@ The important identity fields are:
 - `sourcedb`
 - `sourceid`
 
-PubAnnotation compares annotations by canonical document identity, not by filename alone.
+PubAnnotation comparison is effectively document-identity-based. Matching filenames alone are not enough if the document identity differs.
 
-## What the repo outputs
+## Creating Your Own Project
 
-After directory annotation, you will usually have a folder like:
+The exact PubAnnotation UI may change, but the practical goal is simple:
 
-```text
-outputs/<run_name>/
-  10074612.json
-  10539815.json
-  10840460.json
-```
+1. create a new project for your dataset
+2. make sure the project is using the same documents you want to compare
+3. upload your generated annotations into that project
 
-Each file is already valid PubAnnotation JSON with fields such as:
-
-- `text`
-- `sourcedb`
-- `sourceid`
-- `denotations`
-
-Format reference:
-
-- [PubAnnotation annotation format](https://www.pubannotation.org/docs/annotation-format/)
-
-## Upload options
-
-### Option 1: PubAnnotation UI
-
-This is easiest when you want to inspect a few files manually.
+Helpful references:
 
 - [Creating annotations](https://www.pubannotation.org/docs/create-annotation/)
 - [Annotation editor](https://www.pubannotation.org/docs/annotation-editor/)
 
-### Option 2: PubAnnotation API
+## Upload Options
 
-This is better when you want to upload a full valid set.
+### Option 1: Use The PubAnnotation UI
+
+Best when:
+
+- you want to inspect a few files manually
+- you are trying the workflow for the first time
+- you want a low-friction sanity check before uploading a full valid set
+
+### Option 2: Use The PubAnnotation API
+
+Best when:
+
+- you want to upload the entire valid set
+- you want a repeatable batch workflow
+
+Reference:
 
 - [PubAnnotation API](https://www.pubannotation.org/docs/api/)
 
@@ -68,29 +112,44 @@ Example request shape:
 curl -H "content-type: application/json" -u "USERNAME:PASSWORD" -d @annotations.json "https://pubannotation.org/projects/<your-project>/docs/sourcedb/<SOURCE_DB>/sourceid/<SOURCE_ID>/annotations.json"
 ```
 
-## Public evaluation projects
+## Public Evaluation Projects
 
 - BC5CDR: [https://pubannotation.org/projects/bc5cdr-valid](https://pubannotation.org/projects/bc5cdr-valid)
 - BioRED: [https://pubannotation.org/projects/biored-valid](https://pubannotation.org/projects/biored-valid)
 - NCBI Disease: [https://pubannotation.org/projects/ncbi-valid](https://pubannotation.org/projects/ncbi-valid)
 
-## Practical comparison flow
+## Practical Comparison Checklist
 
-1. Upload your output files to your own project.
-2. Open the public evaluation project for the same dataset.
-3. Check that both projects contain the same `sourcedb/sourceid`.
-4. Inspect the same document across projects.
-5. Use those comparisons for error analysis or reporting.
+When you compare your project with the public evaluation project, check:
 
-## Suggested usage pattern
+1. are `sourcedb` and `sourceid` identical?
+2. are you looking at the same dataset and split?
+3. was the valid set annotated with the final refined guideline?
+4. did you upload the full output directory rather than a partial mix of files?
 
-The published specs in this repository use the paper-style subset size:
+If all four are true, then the project comparison is meaningful.
 
-- run the main spec with `sample_size = 10`
-- annotate the full valid 100-document set
-- upload the full output directory
-- compare against the public evaluation project
+## Recommended Usage Pattern
 
-If you want a smaller local smoke test, create your own temporary spec with a reduced `sample_size` and keep it outside the published repo surface.
+The published repo surface is aimed at the paper-style path:
 
-Official PubAnnotation documentation may change over time, so treat the links above as the authoritative source for UI and API details.
+1. use a published spec
+2. sample `10` train documents
+3. refine until `F1 >= 0.9` or no improvement
+4. annotate the valid `100` documents
+5. upload the valid-set predictions to your own PubAnnotation project
+6. compare them with the public evaluation project
+
+If you want a smaller local smoke test, make a temporary local copy of a spec and reduce `sample_size`, but keep that outside the published repo surface.
+
+## Why PubAnnotation Is Kept Separate
+
+This repository already includes:
+
+- datasets
+- schemas
+- guideline files
+- refinement code
+- valid-set annotation code
+
+So PubAnnotation is intentionally used only for the final evaluation-facing step. That separation keeps the reproduction code self-contained while still giving readers a shared place to inspect and compare results.
