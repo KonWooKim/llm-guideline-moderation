@@ -42,7 +42,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--entities", help="Path to entity schema JSON")
     parser.add_argument("--output-dir", help="Directory for artifacts")
     parser.add_argument("--provider", default="openai", choices=["openai", "gemini", "deepseek"], help="LLM provider")
-    parser.add_argument("--model", default="gpt-5", help="OpenAI model name")
+    parser.add_argument("--model", default="gpt-5", help="Model name")
     parser.add_argument(
         "--mode",
         default="full",

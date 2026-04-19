@@ -4,3 +4,4 @@ __pycache__/
 outputs/
 tests/
 examples/
+experiments/*_debug_round1.spec.json

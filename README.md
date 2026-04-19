@@ -45,17 +45,24 @@ It does **not** guarantee exact reproduction of the original paper outputs, beca
 Repository defaults:
 
 - paper-style reproduction: `sample_size = 10`
-- quick smoke test: `sample_size = 3`
 - fixed random seed recorded in each spec
 - shared sampled subset across compared models
 - moderation termination threshold: strict-match `F1 >= 0.9`
 
 ## Quick start
 
-Set your provider API key first, then start with a debug spec.
+Set the API key for the provider you want to use first, then run one of the published experiment specs.
+
+Supported providers in this repository are:
+
+- `openai`
+- `gemini`
+- `deepseek`
+
+Use the provider and model that match your own setup.
 
 ```bash
-python scripts/run_iterative_refinement.py --spec experiments/bc5cdr_debug_round1.spec.json --provider gemini --model gemini-2.5-flash
+python scripts/run_iterative_refinement.py --spec experiments/bc5cdr_valid_round1.spec.json --provider <provider> --model <model_name>
 ```
 
 That run writes a `final_guidelines.txt` file under `outputs/<experiment_id>_iterative/final/`.
@@ -63,18 +70,12 @@ That run writes a `final_guidelines.txt` file under `outputs/<experiment_id>_ite
 Then annotate a valid set:
 
 ```bash
-python scripts/annotate_pubannotation_dir.py --input-dir data/datasets/bc5cdr/valid --guidelines outputs/bc5cdr_valid_gpt_r_g_debug_round1_iterative/final/final_guidelines.txt --entities data/schemas/bc5cdr_entities.schema.json --output-dir outputs/bc5cdr_valid_annotations --provider gemini --model gemini-2.5-flash
+python scripts/annotate_pubannotation_dir.py --input-dir data/datasets/bc5cdr/valid --guidelines outputs/<experiment_id>_iterative/final/final_guidelines.txt --entities data/schemas/bc5cdr_entities.schema.json --output-dir outputs/bc5cdr_valid_annotations --provider <provider> --model <model_name>
 ```
 
 ## Specs
 
-Use the debug specs first if you want to verify provider setup, prompt formatting, scoring, and PubAnnotation output cheaply.
-
-- `experiments/bc5cdr_debug_round1.spec.json`
-- `experiments/biored_debug_round1.spec.json`
-- `experiments/ncbi_disease_debug_round1.spec.json`
-
-Use the main specs when you want the paper-style train subset size.
+Use the published specs when you want the paper-style train subset size.
 
 - `experiments/bc5cdr_valid_round1.spec.json`
 - `experiments/biored_valid_round1.spec.json`
@@ -88,6 +89,8 @@ Each spec records:
 - train source directory
 - sampling method, sample size, and seed
 - provider, model, and round count
+
+If you want a smaller smoke test for local debugging, copy one of these specs and reduce `sample_size` locally.
 
 ## PubAnnotation comparison
 

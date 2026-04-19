@@ -84,17 +84,13 @@ curl -H "content-type: application/json" -u "USERNAME:PASSWORD" -d @annotations.
 
 ## Suggested usage pattern
 
-Start small:
-
-- run a debug spec with `sample_size = 3`
-- annotate a few valid files
-- confirm the outputs look right in PubAnnotation
-
-Then scale up:
+The published specs in this repository use the paper-style subset size:
 
 - run the main spec with `sample_size = 10`
 - annotate the full valid 100-document set
 - upload the full output directory
 - compare against the public evaluation project
+
+If you want a smaller local smoke test, create your own temporary spec with a reduced `sample_size` and keep it outside the published repo surface.
 
 Official PubAnnotation documentation may change over time, so treat the links above as the authoritative source for UI and API details.
