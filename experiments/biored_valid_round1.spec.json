@@ -5,7 +5,7 @@
   "split": "valid",
   "evaluation_url": "https://pubannotation.org/projects/biored-valid",
   "paths": {
-    "input_pubannotation": "data/datasets/biored/valid/valid_14510914.json",
+    "input_pubannotation": "data/datasets/biored/valid/14510914.json",
     "guidelines_txt": "data/guidelines/biored_guidelines.txt",
     "entity_schema_json": "data/schemas/biored_entities.schema.json",
     "output_dir": "outputs"
