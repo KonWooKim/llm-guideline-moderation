@@ -11,10 +11,6 @@ Use one JSON spec file per reproducible moderation run so that:
 - the chosen provider/model/round count are explicit,
 - readers can trace every artifact directory back to a named experiment.
 
-## Example
-
-- [examples/experiment_spec.example.json](C:\Users\kken1\OneDrive\바탕 화면\ACL\llm-guideline-moderation\examples\experiment_spec.example.json)
-
 ## Directory Layout
 
 Each run now uses this structure:

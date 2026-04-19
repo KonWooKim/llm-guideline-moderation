@@ -31,13 +31,13 @@ Instead, it provides:
 - reuse the same sampled subset across compared models
 - record the `seed` and sampling metadata in the experiment spec
 
-## Repo layout
+## Key files
 
-- [src/llm_guideline_moderation](C:\Users\kken1\OneDrive\바탕 화면\ACL\llm-guideline-moderation\src\llm_guideline_moderation)
-- [experiments](C:\Users\kken1\OneDrive\바탕 화면\ACL\llm-guideline-moderation\experiments)
-- [data](C:\Users\kken1\OneDrive\바탕 화면\ACL\llm-guideline-moderation\data)
-- [docs/experiment_spec.md](C:\Users\kken1\OneDrive\바탕 화면\ACL\llm-guideline-moderation\docs\experiment_spec.md)
-- [docs/moderation_sampling.md](C:\Users\kken1\OneDrive\바탕 화면\ACL\llm-guideline-moderation\docs\moderation_sampling.md)
+- `src/llm_guideline_moderation/`
+- `experiments/`
+- `data/`
+- `docs/experiment_spec.md`
+- `docs/moderation_sampling.md`
 
 ## Minimal workflow
 
