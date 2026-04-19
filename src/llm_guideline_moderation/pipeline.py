@@ -9,6 +9,8 @@ from .risk import assess_risk
 from .types import (
     Annotation,
     AnnotationAuditChange,
+    FullSimulationResult,
+    InitialAnnotationResult,
     ModeratedAnnotationResult,
     ModerationRoundInput,
     ModerationRoundResult,
@@ -46,6 +48,52 @@ def _parse_moderated_annotation_result(raw_text: str) -> ModeratedAnnotationResu
         annotations=annotations,
         changes=changes,
         raw_response=parsed,
+    )
+
+
+def _parse_initial_annotation_result(raw_text: str) -> InitialAnnotationResult:
+    parsed = json.loads(raw_text)
+    raw_annotations = parsed.get("annotations", [])
+    annotations = [Annotation(**item) for item in raw_annotations]
+    return InitialAnnotationResult(
+        annotations=annotations,
+        raw_response=parsed,
+    )
+
+
+def annotate_with_guidelines(
+    text: str,
+    guidelines: str,
+    entities,
+    provider: ModerationProvider,
+    instructions: str = "",
+    system_instruction: str = (
+        "You are an expert AI for text annotation. "
+        "Your task is to annotate all entities from the provided text based on a strict schema and guidelines."
+    ),
+    output_configuration=None,
+) -> InitialAnnotationResult:
+    if output_configuration is None:
+        output_configuration = ModerationRoundInput(
+            text=text,
+            guidelines=guidelines,
+            initial_annotations=[],
+            entities=entities,
+        ).output_configuration
+
+    json_schema, rationale_instruction = generate_schema_parts(output_configuration)
+    prompt = render_prompt(
+        "annotate_with_guidelines",
+        system_instruction=system_instruction,
+        entity_schema=_entity_schema_text(entities),
+        guidelines=guidelines or "(no guidelines provided)",
+        instructions=instructions or "Follow the provided guidelines exactly.",
+        json_schema=json_schema,
+        rationale_instruction=rationale_instruction,
+        input_text=text,
+    )
+    return _parse_initial_annotation_result(
+        provider.complete("annotate_with_guidelines", prompt)
     )
 
 
@@ -176,4 +224,60 @@ def simulate_moderation_iterations(
         rounds=rounds,
         final_guidelines=rounds[-1].refined_guidelines,
         final_annotations=rounds[-1].moderated_annotations,
+    )
+
+
+def run_full_simulation(
+    text: str,
+    guidelines: str,
+    entities,
+    provider: ModerationProvider,
+    instructions: str = "",
+    system_instruction: str = (
+        "You are an expert AI for text annotation. "
+        "Your task is to annotate all entities from the provided text based on a strict schema and guidelines."
+    ),
+    discrepancy_examples: str = "",
+    true_positive_examples: str = "",
+    raw_examples: str = "",
+    verified_examples: str = "",
+    output_configuration=None,
+    num_rounds: int = 1,
+) -> FullSimulationResult:
+    initial = annotate_with_guidelines(
+        text=text,
+        guidelines=guidelines,
+        entities=entities,
+        provider=provider,
+        instructions=instructions,
+        system_instruction=system_instruction,
+        output_configuration=output_configuration,
+    )
+    round_input = ModerationRoundInput(
+        text=text,
+        guidelines=guidelines,
+        initial_annotations=initial.annotations,
+        entities=entities,
+        instructions=instructions,
+        discrepancy_examples=discrepancy_examples,
+        true_positive_examples=true_positive_examples,
+        raw_examples=raw_examples,
+        verified_examples=verified_examples,
+        output_configuration=output_configuration
+        if output_configuration is not None
+        else ModerationRoundInput(
+            text=text,
+            guidelines=guidelines,
+            initial_annotations=[],
+            entities=entities,
+        ).output_configuration,
+    )
+    moderation = simulate_moderation_iterations(
+        initial_input=round_input,
+        provider=provider,
+        num_rounds=num_rounds,
+    )
+    return FullSimulationResult(
+        initial_annotations=initial.annotations,
+        moderation=moderation,
     )

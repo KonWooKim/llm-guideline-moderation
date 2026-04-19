@@ -74,6 +74,12 @@ class ModeratedAnnotationResult:
 
 
 @dataclass(slots=True)
+class InitialAnnotationResult:
+    annotations: list[Annotation]
+    raw_response: Any | None = None
+
+
+@dataclass(slots=True)
 class ModerationRoundInput:
     text: str
     guidelines: str
@@ -108,7 +114,14 @@ class ModerationRunResult:
     final_annotations: list[Annotation]
 
 
+@dataclass(slots=True)
+class FullSimulationResult:
+    initial_annotations: list[Annotation]
+    moderation: ModerationRunResult
+
+
 LLMTaskName = Literal[
+    "annotate_with_guidelines",
     "infer_discrepancy_patterns",
     "generate_moderation_principle",
     "refine_guidelines",

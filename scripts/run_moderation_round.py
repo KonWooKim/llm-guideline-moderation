@@ -13,7 +13,11 @@ if str(SRC_ROOT) not in sys.path:
 from llm_guideline_moderation.artifacts import write_json
 from llm_guideline_moderation.experiment import ExperimentSpec
 from llm_guideline_moderation.layout import prepare_run_layout
-from llm_guideline_moderation.pipeline import simulate_moderation_iterations
+from llm_guideline_moderation.pipeline import (
+    annotate_with_guidelines,
+    run_full_simulation,
+    simulate_moderation_iterations,
+)
 from llm_guideline_moderation.providers.gemini import GeminiProvider
 from llm_guideline_moderation.providers.openai import OpenAIProvider
 from llm_guideline_moderation.pubannotation import (
@@ -38,6 +42,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--output-dir", help="Directory for artifacts")
     parser.add_argument("--provider", default="openai", choices=["openai", "gemini"], help="LLM provider")
     parser.add_argument("--model", default="gpt-5", help="OpenAI model name")
+    parser.add_argument(
+        "--mode",
+        default="full",
+        choices=["annotation-only", "moderation-only", "full"],
+        help="Run only initial annotation, only moderation from existing annotations, or the full pipeline.",
+    )
     parser.add_argument("--rounds", type=int, default=1, help="Number of moderation rounds")
     parser.add_argument("--project-link", default="", help="PubAnnotation project URL for readers")
     parser.add_argument("--evaluation-link", default="", help="PubAnnotation evaluation URL for readers")
@@ -68,6 +78,7 @@ def main() -> None:
         output_dir_arg = spec.paths.output_dir
         model_name = spec.model.model
         provider_name = spec.model.provider
+        mode = "full"
         rounds = spec.model.rounds
         project_link = spec.pubannotation.project_url
         evaluation_link = spec.pubannotation.evaluation_url
@@ -100,6 +111,7 @@ def main() -> None:
         output_dir_arg = args.output_dir
         model_name = args.model
         provider_name = args.provider
+        mode = args.mode
         rounds = args.rounds
         project_link = args.project_link
         evaluation_link = args.evaluation_link
@@ -137,12 +149,6 @@ def main() -> None:
         ),
     )
 
-    result = simulate_moderation_iterations(
-        initial_input=round_input,
-        provider=provider,
-        num_rounds=rounds,
-    )
-
     layout = prepare_run_layout(output_dir_arg, experiment_id)
 
     write_json(layout["inputs"] / "input.pubann.json", input_doc)
@@ -151,29 +157,106 @@ def main() -> None:
     if experiment_meta is not None:
         write_json(layout["inputs"] / "experiment_spec.json", experiment_meta)
 
-    for round_result in result.rounds:
-        round_dir = layout["rounds"] / f"round_{round_result.round_index:02d}"
-        round_dir.mkdir(parents=True, exist_ok=True)
-        write_json(round_dir / "result.json", round_result)
-        for prompt_name, prompt_text in round_result.prompts.items():
-            Path(round_dir / f"{prompt_name}.txt").write_text(prompt_text, encoding="utf-8")
-
-    write_json(layout["final"] / "moderation_run.json", result)
-    Path(layout["final"] / "final_guidelines.txt").write_text(
-        result.final_guidelines,
-        encoding="utf-8",
-    )
-    write_json(
-        layout["final"] / "final_annotations.pubann.json",
-        annotations_to_pubannotation(
+    if mode == "annotation-only":
+        initial = annotate_with_guidelines(
             text=input_doc["text"],
-            annotations=result.final_annotations,
-            sourcedb=input_doc.get("sourcedb", "unknown"),
-            sourceid=input_doc.get("sourceid", "unknown"),
-            project=input_doc.get("project"),
-            target=input_doc.get("target"),
-        ),
-    )
+            guidelines=guidelines,
+            entities=entities,
+            provider=provider,
+            output_configuration=OutputConfiguration(
+                include_rationale=True,
+                include_guideline_section=True,
+            ),
+        )
+        write_json(layout["final"] / "initial_annotation_run.json", initial)
+        write_json(
+            layout["final"] / "initial_annotations.pubann.json",
+            annotations_to_pubannotation(
+                text=input_doc["text"],
+                annotations=initial.annotations,
+                sourcedb=input_doc.get("sourcedb", "unknown"),
+                sourceid=input_doc.get("sourceid", "unknown"),
+                project=input_doc.get("project"),
+                target=input_doc.get("target"),
+            ),
+        )
+    elif mode == "moderation-only":
+        result = simulate_moderation_iterations(
+            initial_input=round_input,
+            provider=provider,
+            num_rounds=rounds,
+        )
+        for round_result in result.rounds:
+            round_dir = layout["rounds"] / f"round_{round_result.round_index:02d}"
+            round_dir.mkdir(parents=True, exist_ok=True)
+            write_json(round_dir / "result.json", round_result)
+            for prompt_name, prompt_text in round_result.prompts.items():
+                Path(round_dir / f"{prompt_name}.txt").write_text(prompt_text, encoding="utf-8")
+        write_json(layout["final"] / "moderation_run.json", result)
+        Path(layout["final"] / "final_guidelines.txt").write_text(
+            result.final_guidelines,
+            encoding="utf-8",
+        )
+        write_json(
+            layout["final"] / "final_annotations.pubann.json",
+            annotations_to_pubannotation(
+                text=input_doc["text"],
+                annotations=result.final_annotations,
+                sourcedb=input_doc.get("sourcedb", "unknown"),
+                sourceid=input_doc.get("sourceid", "unknown"),
+                project=input_doc.get("project"),
+                target=input_doc.get("target"),
+            ),
+        )
+    else:
+        full_result = run_full_simulation(
+            text=input_doc["text"],
+            guidelines=guidelines,
+            entities=entities,
+            provider=provider,
+            discrepancy_examples=discrepancy_examples,
+            true_positive_examples=true_positive_examples,
+            raw_examples=raw_examples,
+            verified_examples=verified_examples,
+            output_configuration=OutputConfiguration(
+                include_rationale=True,
+                include_guideline_section=True,
+            ),
+            num_rounds=rounds,
+        )
+        write_json(layout["final"] / "full_simulation_run.json", full_result)
+        write_json(
+            layout["final"] / "initial_annotations.pubann.json",
+            annotations_to_pubannotation(
+                text=input_doc["text"],
+                annotations=full_result.initial_annotations,
+                sourcedb=input_doc.get("sourcedb", "unknown"),
+                sourceid=input_doc.get("sourceid", "unknown"),
+                project=input_doc.get("project"),
+                target=input_doc.get("target"),
+            ),
+        )
+        for round_result in full_result.moderation.rounds:
+            round_dir = layout["rounds"] / f"round_{round_result.round_index:02d}"
+            round_dir.mkdir(parents=True, exist_ok=True)
+            write_json(round_dir / "result.json", round_result)
+            for prompt_name, prompt_text in round_result.prompts.items():
+                Path(round_dir / f"{prompt_name}.txt").write_text(prompt_text, encoding="utf-8")
+        Path(layout["final"] / "final_guidelines.txt").write_text(
+            full_result.moderation.final_guidelines,
+            encoding="utf-8",
+        )
+        write_json(
+            layout["final"] / "final_annotations.pubann.json",
+            annotations_to_pubannotation(
+                text=input_doc["text"],
+                annotations=full_result.moderation.final_annotations,
+                sourcedb=input_doc.get("sourcedb", "unknown"),
+                sourceid=input_doc.get("sourceid", "unknown"),
+                project=input_doc.get("project"),
+                target=input_doc.get("target"),
+            ),
+        )
     write_json(
         layout["links"] / "reader_links.json",
         {
