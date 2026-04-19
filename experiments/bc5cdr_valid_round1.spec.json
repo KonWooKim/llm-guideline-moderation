@@ -11,7 +11,7 @@
   "paths": {
     "input_pubannotation": "data/bc5cdr/valid/bc5cdr-valid-gpt-r-g.pubann.json",
     "guidelines_txt": "data/guidelines/bc5cdr_guidelines.txt",
-    "entity_schema_json": "data/schemas/disease_only.schema.json",
+    "entity_schema_json": "data/schemas/bc5cdr_entities.schema.json",
     "output_dir": "outputs"
   },
   "evidence": {
