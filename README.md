@@ -171,6 +171,16 @@ That means each model contributes five published result variants:
 
 If you open any of the PubAnnotation project links below and scroll down to the **Evaluations** section, you can inspect the evaluation values corresponding to the results reported in the paper tables.
 
+You can also inspect the underlying documents directly:
+
+1. open one of the project links below
+2. scroll to the **Documents** section
+3. open the document list for the source database
+4. inspect columns such as `source DB`, `source ID`, `text`, `size`, and `# Ann.`
+5. click a specific document to open its detailed view
+
+Inside the detailed document page, the recommended view is **Annotations -> TextAE**. TextAE provides the clearest visual display of entity spans and labels, and is the easiest way to inspect annotation behavior document by document.
+
 ### BC5CDR
 
 | Model | NR-NG | NR-G | R-NG | R-G | R-M |

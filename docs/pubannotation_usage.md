@@ -85,6 +85,48 @@ Helpful references:
 - [Creating annotations](https://www.pubannotation.org/docs/create-annotation/)
 - [Annotation editor](https://www.pubannotation.org/docs/annotation-editor/)
 
+## Inspecting Documents Inside A Project
+
+Once you open a project page, you can use the **Documents** section to inspect the underlying dataset entries.
+
+The usual navigation flow is:
+
+1. open a project
+2. scroll to **Documents**
+3. click the source database entry
+4. review the document table
+5. click a specific `source ID` entry for a detailed document page
+
+The document table is useful because it lets you quickly inspect:
+
+- `source DB`
+- `source ID`
+- `text`
+- `size`
+- `# Ann.`
+
+This is often the fastest way to confirm that your uploaded project and the public evaluation project are aligned at the document level before you inspect annotations in detail.
+
+## Recommended Annotation View: TextAE
+
+On the detailed document page, the best view for manual inspection is usually:
+
+`Annotations -> TextAE`
+
+TextAE is recommended because it gives a clear visual rendering of:
+
+- entity spans
+- entity labels
+- span boundaries in context
+
+That makes it much easier to compare:
+
+- no-guideline outputs
+- guideline-conditioned outputs
+- moderated / refined-guideline outputs
+
+across the same document.
+
 ## Upload Options
 
 ### Option 1: Use The PubAnnotation UI
