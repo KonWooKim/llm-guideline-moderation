@@ -38,6 +38,7 @@ train subset sample
 - shared sampled subset across compared models
 - fixed random seed recorded in each spec
 - prompt evidence cap: `n_examples = 5`
+- evaluation tolerance: `1` character boundary soft match
 - stopping rule: strict-match `F1 >= 0.9` or no further improvement
 
 ## Repository Layout

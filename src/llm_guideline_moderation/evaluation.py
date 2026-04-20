@@ -7,7 +7,7 @@ from .types import Annotation
 
 @dataclass(slots=True)
 class PubAnnotationEvaluatorOptions:
-    soft_match_characters: int = 0
+    soft_match_characters: int = 1
     soft_match_words: int = 0
 
 

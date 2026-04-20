@@ -86,10 +86,7 @@ def main() -> None:
             include_rationale=True,
             include_guideline_section=True,
         ),
-        evaluation_options=PubAnnotationEvaluatorOptions(
-            soft_match_characters=0,
-            soft_match_words=0,
-        ),
+        evaluation_options=PubAnnotationEvaluatorOptions(),
     )
 
     layout = prepare_run_layout(output_root, f"{spec.experiment_id}_iterative")
