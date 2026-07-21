@@ -238,10 +238,24 @@ The repository is a modularized reproduction release for the paper's guideline r
 Publication metadata is not finalized yet, so the citation entry below is a temporary placeholder and should be updated once the final venue and author list are available.
 
 ```bibtex
-@inproceedings{TBD,
-  title={Refining and Reusing Annotation Guidelines for LLM Annotation},
-  author={TBD},
-  booktitle={TBD},
-  year={TBD}
+@inproceedings{kim-etal-2026-refining,
+    title = "Refining and Reusing Annotation Guidelines for {LLM} Annotation",
+    author = "Kim, Kon Woo  and
+      Kim, Jin-Dong  and
+      Aizawa, Akiko",
+    editor = "Liakata, Maria  and
+      Moreira, Viviane P.  and
+      Zhang, Jiajun  and
+      Jurgens, David",
+    booktitle = "Proceedings of the 64th Annual Meeting of the {A}ssociation for {C}omputational {L}inguistics (Volume 1: Long Papers)",
+    month = jul,
+    year = "2026",
+    address = "San Diego, California, United States",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2026.acl-long.1760/",
+    doi = "10.18653/v1/2026.acl-long.1760",
+    pages = "37951--37964",
+    ISBN = "979-8-89176-390-6",
+    abstract = "While Large Language Models (LLMs) demonstrates remarkable zero-shot annotation tasks, they often struggle with the specialized conventions of gold-standard benchmarks. We propose the systematic reuse and refinement of annotation guidelines as an alignment mechanism, introducing an iterative moderation framework that simulates the early phases of annotation projects. We evaluate three hypotheses: (1) the efficacy of guideline integration, (2) the advantage of reasoning-optimized models, and (3) the viability of moderation under minimal supervision. Testing across biomedical NER tasks (NCBI Disease, BC5CDR, BioRED) with three LLM families (GPT, Gemini, DeepSeek), our results empirically confirm all three hypotheses. While the iterative moderation framework shows a good potential in effectively refining guidelines, our analysis also reveals a significant room for improvement."
 }
 ```
